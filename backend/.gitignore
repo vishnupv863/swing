@@ -1,0 +1,80 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+*.so
+
+# Distribution / packaging
+bin/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables (Crucial for FastAPI apps to protect secrets)
+.env
+.env.*
+!.env.example
+
+# Testing / Coverage
+.cache
+.pytest_cache/
+.nosexycache
+htmlcov/
+.toml
+.coverage
+.coverage.*
+.hypothesis/
+.run/
+
+# Database files (if using local SQLite or dumps)
+*.db
+*.sqlite3
+
+# Logging
+*.log
+
+# Linters and formatters
+.black
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+
+# IDE / Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS specific files
+.DS_Store
+Thumbs.db

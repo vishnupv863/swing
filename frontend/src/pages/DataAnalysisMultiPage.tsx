@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import ChartPanel from "../components/ChartPanel";
+import OHLCChartPanel from "../components/OHLCChartPanel";
 import { getDataAnalysisMulti } from "../api/dataAnalysis";
 import type { DataAnalysisMultiResponse } from "../api/dataAnalysis";
 
@@ -9,7 +9,8 @@ function DataAnalysisMultiPage() {
     const [searchParams] = useSearchParams();
     const tickers = searchParams.getAll("tickers");
 
-    const [emaDynamics, setEmaDynamics] = useState<DataAnalysisMultiResponse["ema_dynamics"]>({});
+    const [ohlc, setOhlc] = useState<DataAnalysisMultiResponse["ohlc"]>({});
+    const [ema, setEma] = useState<DataAnalysisMultiResponse["ema"]>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -25,7 +26,8 @@ function DataAnalysisMultiPage() {
             try {
                 const result = await getDataAnalysisMulti(tickers);
                 if (cancelled) return;
-                setEmaDynamics(result.ema_dynamics);
+                setOhlc(result.ohlc);
+                setEma(result.ema);
             } catch (err) {
                 if (!cancelled) {
                     setError(err instanceof Error ? err.message : "Something went wrong");
@@ -53,26 +55,27 @@ function DataAnalysisMultiPage() {
             {loading && <p>Loading...</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}
 
-            {Object.entries(emaDynamics).map(([ticker, points]) => (
-                <ChartPanel
-                    key={ticker}
-                    title={`${ticker} — EMA velocity & acceleration`}
-                    dates={points.map((p) => p.Date)}
-                    series={[
-                        {
-                            values: points.map((p) => p.ema_velocity),
-                            type: "line",
-                            color: "#4caf50",
-                            name: "Velocity",
-                        },
-                        {
-                            values: points.map((p) => p.ema_acceleration),
-                            type: "line",
-                            color: "#ff9800",
-                            name: "Acceleration",
-                        },
-                    ]}
-                />
+            {Object.keys(ohlc).map((ticker) => (
+                <div key={ticker}>
+                    <h3>{ticker}</h3>
+
+                    <OHLCChartPanel
+                        title="Price"
+                        data={ohlc[ticker] ?? []}
+                        ema={[
+                            {
+                                name: "EMA 7",
+                                color: "#2196f3",
+                                values: (ema[ticker] ?? []).map((p) => p.ema_7),
+                            },
+                            {
+                                name: "EMA 21",
+                                color: "#e91e63",
+                                values: (ema[ticker] ?? []).map((p) => p.ema_21),
+                            },
+                        ]}
+                    />
+                </div>
             ))}
         </div>
     );

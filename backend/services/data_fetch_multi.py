@@ -20,7 +20,7 @@ def get_clean_data_multi(tickers: list[str]) -> dict[str, pd.DataFrame]:
 
     raw = yf.download(
         tickers,
-        period="6mo",
+        period="9mo",
         interval="1d",
         auto_adjust=False,
         progress=False,

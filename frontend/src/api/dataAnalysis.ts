@@ -1,17 +1,27 @@
 import api from "./api";
 
-export interface EmaDynamicsPoint {
+export interface EmaPoint {
     Date: string;
-    ema_velocity: number;
-    ema_acceleration: number;
+    ema_7: number;
+    ema_21: number;
+}
+
+export interface OHLCRecord {
+    date: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
 }
 
 export interface DataAnalysisResponse {
-    ema_dynamics: EmaDynamicsPoint[];
+    ohlc: OHLCRecord[];
+    ema: EmaPoint[];
 }
 
 export interface DataAnalysisMultiResponse {
-    ema_dynamics: Record<string, EmaDynamicsPoint[]>;
+    ohlc: Record<string, OHLCRecord[]>;
+    ema: Record<string, EmaPoint[]>;
 }
 
 export function getDataAnalysis(ticker: string) {

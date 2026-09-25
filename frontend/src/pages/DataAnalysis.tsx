@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import ChartPanel from "../components/ChartPanel";
+import OHLCChartPanel from "../components/OHLCChartPanel";
 import { getDataAnalysis } from "../api/dataAnalysis";
-import type { EmaDynamicsPoint } from "../api/dataAnalysis";
+import type { EmaPoint, OHLCRecord } from "../api/dataAnalysis";
 
 function DataAnalysis() {
     const { ticker: rawTicker } = useParams<{ ticker: string }>();
     const ticker = rawTicker ? decodeURIComponent(rawTicker) : "";
-    const [emaDynamics, setEmaDynamics] = useState<EmaDynamicsPoint[]>([]);
+    const [ohlc, setOhlc] = useState<OHLCRecord[]>([]);
+    const [ema, setEma] = useState<EmaPoint[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -24,7 +25,8 @@ function DataAnalysis() {
             try {
                 const result = await getDataAnalysis(ticker);
                 if (cancelled) return;
-                setEmaDynamics(result.ema_dynamics);
+                setOhlc(result.ohlc);
+                setEma(result.ema);
             } catch (err) {
                 if (!cancelled) {
                     setError(err instanceof Error ? err.message : "Something went wrong");
@@ -61,22 +63,12 @@ function DataAnalysis() {
             {loading && <p>Loading...</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}
 
-            <ChartPanel
-                title="EMA velocity & acceleration"
-                dates={emaDynamics.map((p) => p.Date)}
-                series={[
-                    {
-                        values: emaDynamics.map((p) => p.ema_velocity),
-                        type: "line",
-                        color: "#4caf50",
-                        name: "Velocity",
-                    },
-                    {
-                        values: emaDynamics.map((p) => p.ema_acceleration),
-                        type: "line",
-                        color: "#ff9800",
-                        name: "Acceleration",
-                    },
+            <OHLCChartPanel
+                title="Price"
+                data={ohlc}
+                ema={[
+                    { name: "EMA 7", color: "#2196f3", values: ema.map((p) => p.ema_7) },
+                    { name: "EMA 21", color: "#e91e63", values: ema.map((p) => p.ema_21) },
                 ]}
             />
         </div>

@@ -22,9 +22,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # --------------------------------------------------
+      # ---------------------------------------------------
       # Check whether GitHub can access the Azure secrets
-      # --------------------------------------------------
+      # ---------------------------------------------------
       - name: Check Azure secrets
         env:
           CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}

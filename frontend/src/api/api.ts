@@ -1,3 +1,4 @@
+// const API_URL = "http://127.0.0.1:8000";
 const API_URL = "https://fastapi-backend.internal.ambitiousbeach-dced774b.centralindia.azurecontainerapps.io";
 
 const api = {

@@ -5,11 +5,12 @@ from routers import home, data_analysis
 
 app = FastAPI()
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "https://react-frontend.ambitiousbeach-dced774b.centralindia.azurecontainerapps.io",
+        "https://react-frontend.ambitiousbeach-dced774b.centralindia.azurecontainerapps.io"
     ],
     allow_credentials=True,
     allow_methods=["*"],

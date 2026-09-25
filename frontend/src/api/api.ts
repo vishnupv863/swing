@@ -1,6 +1,5 @@
 // const API_URL = "http://127.0.0.1:8000";
-const API_URL = "https://fastapi-backend.internal.ambitiousbeach-dced774b.centralindia.azurecontainerapps.io";
-
+const API_URL = "https://fastapi-backend.ambitiousbeach-dced774b.centralindia.azurecontainerapps.io";
 const api = {
   get: async <T>(endpoint: string): Promise<T> => {
     const response = await fetch(`${API_URL}${endpoint}`);

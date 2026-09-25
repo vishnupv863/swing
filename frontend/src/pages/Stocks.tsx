@@ -90,7 +90,7 @@ function Stocks() {
                             <div className="category-header">
                                 <h3 className="category-title">{category.title}</h3>
                                 <Link
-                                    to={`/data-analysis/multi?${params.toString()}`}
+                                    to={`/data-analysis/multi?${params.toString()}&category=${encodeURIComponent(category.title)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn-analysis"

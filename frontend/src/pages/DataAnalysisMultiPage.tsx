@@ -1,3 +1,4 @@
+// DataAnalysisMultiPage.tsx
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -8,6 +9,7 @@ import type { DataAnalysisMultiResponse } from "../api/dataAnalysis";
 function DataAnalysisMultiPage() {
     const [searchParams] = useSearchParams();
     const tickers = searchParams.getAll("tickers");
+    const category = searchParams.get("category");
 
     const [ohlc, setOhlc] = useState<DataAnalysisMultiResponse["ohlc"]>({});
     const [ema, setEma] = useState<DataAnalysisMultiResponse["ema"]>({});
@@ -44,13 +46,20 @@ function DataAnalysisMultiPage() {
         };
     }, [tickers.join(",")]);
 
+    useEffect(() => {
+        document.title = category ? `${category} — Full Analysis` : "Full Stock Analysis";
+        return () => {
+            document.title = "Intraday Analytics";
+        };
+    }, [category]);
+
     if (tickers.length === 0) {
         return <p style={{ color: "red" }}>No tickers specified.</p>;
     }
 
     return (
         <div>
-            <h2>Full Stock Analysis</h2>
+            <h2>{category ? `${category} — Full Analysis` : "Full Stock Analysis"}</h2>
 
             {loading && <p>Loading...</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}

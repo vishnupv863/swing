@@ -20,7 +20,7 @@ def get_clean_data(ticker: str) -> pd.DataFrame:
 
     raw = yf.download(
         ticker,
-        period="9mo",
+        period="12mo",
         interval="1d",
         auto_adjust=False,
         progress=False,

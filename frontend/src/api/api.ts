@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000";
+// api.ts: replace the two API_URL lines with:
+const API_URL = import.meta.env.VITE_API_URL;
 // const API_URL = "https://fastapi-backend.ambitiousbeach-dced774b.centralindia.azurecontainerapps.io";
 const api = {
   get: async <T>(endpoint: string): Promise<T> => {

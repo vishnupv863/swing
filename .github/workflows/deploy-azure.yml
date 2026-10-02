@@ -70,6 +70,7 @@ jobs:
       - name: Build and push frontend image
         run: |
           docker build \
+            --build-arg VITE_API_URL=${{ vars.VITE_API_URL }} \
             -t ${{ env.ACR_NAME }}.azurecr.io/frontend:${{ github.sha }} \
             ./frontend
 

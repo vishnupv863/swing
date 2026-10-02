@@ -1,23 +1,11 @@
 import { Link } from "react-router-dom";
 import "../styles/stocks.css"
 
-interface Stock {
-    ticker: string;
-    name: string;
-}
-
 interface Category {
     title: string;
-    stocks: Stock[];
+    tickers: string[];
 }
 
-// Helper function to create Stock object from a ticker ending with .NS
-const createStock = (ticker: string): Stock => ({
-    ticker,
-    name: ticker.replace(".NS", ""),
-});
-
-// Category Data Lists (All explicitly including .NS)
 const Large_Caps = [
     "ADANIENT.NS", "ADANIPORTS.NS", "APOLLOHOSP.NS", "ASIANPAINT.NS", "AXISBANK.NS",
     "BAJAJ-AUTO.NS", "BAJFINANCE.NS", "BAJAJFINSV.NS", "BEL.NS", "BHARTIARTL.NS",
@@ -58,18 +46,9 @@ const Small_Caps = [
 ];
 
 const CATEGORIES: Category[] = [
-    {
-        title: "Large Cap Stocks",
-        stocks: Large_Caps.map(createStock),
-    },
-    {
-        title: "Mid Cap Stocks",
-        stocks: Mid_Caps.map(createStock),
-    },
-    {
-        title: "Small Cap Stocks",
-        stocks: Small_Caps.map(createStock),
-    },
+    { title: "Large Cap Stocks", tickers: Large_Caps },
+    { title: "Mid Cap Stocks", tickers: Mid_Caps },
+    { title: "Small Cap Stocks", tickers: Small_Caps },
 ];
 
 function Stocks() {
@@ -83,14 +62,15 @@ function Stocks() {
             <div className="categories-grid">
                 {CATEGORIES.map((category) => {
                     const params = new URLSearchParams();
-                    category.stocks.forEach((stock) => params.append("tickers", stock.ticker));
+                    category.tickers.forEach((t) => params.append("tickers", t));
+                    params.append("category", category.title);
 
                     return (
                         <div key={category.title} className="category-card">
                             <div className="category-header">
                                 <h3 className="category-title">{category.title}</h3>
                                 <Link
-                                    to={`/data-analysis/multi?${params.toString()}&category=${encodeURIComponent(category.title)}`}
+                                    to={`/data-analysis/multi?${params.toString()}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn-analysis"
@@ -98,22 +78,6 @@ function Stocks() {
                                     Get Full Stock Analysis
                                 </Link>
                             </div>
-
-                            <ul className="stock-list">
-                                {category.stocks.map((stock) => (
-                                    <li key={stock.ticker}>
-                                        <Link
-                                            to={`/data-analysis/${encodeURIComponent(stock.ticker)}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="stock-item-link"
-                                        >
-                                            <span className="stock-name">{stock.name}</span>
-                                            <span className="stock-ticker">{stock.ticker}</span>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
                         </div>
                     );
                 })}

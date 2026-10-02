@@ -15,7 +15,7 @@ function Home() {
             <h1>{message}</h1>
             <Link to="/stocks">Stocks Analysis</Link>
             <br />
-            <Link to={`/monte-carlo-weekly/${encodeURIComponent("^NSEI")}`}>Weekly Monte Carlo</Link>
+            <Link to="/indices">Indices Analysis</Link>
         </div>
     );
 }

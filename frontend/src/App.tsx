@@ -1,10 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Stocks from "./pages/Stocks";
-import DataAnalysis from "./pages/DataAnalysis";
-import DataAnalysisMultiPage from "./pages/DataAnalysisMultiPage";
-import MonteCarloWeeklyPage from "./pages/MonteCarloWeeklyPage";
-
+import DataAnalysisMultiPage from "./pages/DataAnalysisWeeklyMultiPage";
+import Indices from "./pages/Indices";
 
 function App() {
   return (
@@ -13,8 +11,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/stocks" element={<Stocks />} />
         <Route path="/data-analysis/multi" element={<DataAnalysisMultiPage />} />
-        <Route path="/data-analysis/:ticker" element={<DataAnalysis />} />
-        <Route path="/monte-carlo-weekly/:ticker" element={<MonteCarloWeeklyPage />} />
+        <Route path="/indices" element={<Indices />} />
       </Routes>
     </BrowserRouter>
   );

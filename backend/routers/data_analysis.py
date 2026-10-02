@@ -1,85 +1,17 @@
-import math
 from fastapi import APIRouter, Query
-from services.data_fetch import get_clean_data
-from services.data_fetch_multi import get_clean_data_multi
-from services.ema import calculate_ema
+from services.data_fetch_weekly_multi import get_clean_weekly_multi_data
+from services.ema_weekly_multi import calculate_ema_multi
+from services.monte_carlo_weekly_multi import calculate_weekly_monte_carlo_multi
+from services.close_price_weekly_multi import calculate_close_weekly_multi
 
 router = APIRouter(prefix="/data-analysis", tags=["Data Analysis"])
 
 
-def build_ohlc_records(data):
-    ohlc = data[["Open", "High", "Low", "Close"]].reset_index()
-    ohlc["Date"] = ohlc["Date"].astype(str)
-    ohlc = ohlc.rename(
-        columns={
-            "Date": "date",
-            "Open": "open",
-            "High": "high",
-            "Low": "low",
-            "Close": "close",
-        }
-    )
-
-    records = ohlc.to_dict(orient="records")
-    for row in records:
-        for key, value in row.items():
-            if isinstance(value, float) and math.isnan(value):
-                row[key] = None
-
-    return records
-
-
-def build_records(df):
-    df = df.reset_index()
-    df["Date"] = df["Date"].astype(str)
-
-    records = df.to_dict(orient="records")
-    for row in records:
-        for key, value in row.items():
-            if isinstance(value, float) and math.isnan(value):
-                row[key] = None
-
-    return records
-
-
-@router.get("")
-def data_analysis(ticker: str):
-
-    data = get_clean_data(ticker)
-
-    # ohlc
-    ohlc_records = build_ohlc_records(data)
-
-    # ema (7 & 21)
-    ema_records = build_records(calculate_ema(data))
-
-    return {
-        "ohlc": ohlc_records,
-        "ema": ema_records,
-    }
-
-
 @router.get("/multi")
 def data_analysis_multi(tickers: list[str] = Query(...)):
-
-    data_by_ticker = get_clean_data_multi(tickers)
-
-    ohlc_result = {}
-    ema_result = {}
-
-    for ticker, data in data_by_ticker.items():
-        ohlc_result[ticker] = build_ohlc_records(data)
-        ema_result[ticker] = build_records(calculate_ema(data))
-
+    data = get_clean_weekly_multi_data(tickers)
     return {
-        "ohlc": ohlc_result,
-        "ema": ema_result,
+        "close": calculate_close_weekly_multi(data),
+        "ema": calculate_ema_multi(data),
+        "monte_carlo": calculate_weekly_monte_carlo_multi(data),
     }
-
-
-from services.monte_carlo_weekly import calculate_weekly_monte_carlo
-
-
-@router.get("/monte-carlo-weekly")
-def monte_carlo_weekly(ticker: str):
-    return {"data": calculate_weekly_monte_carlo(ticker)}

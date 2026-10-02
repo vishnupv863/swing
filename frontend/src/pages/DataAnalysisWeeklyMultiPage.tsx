@@ -1,18 +1,19 @@
-// DataAnalysisMultiPage.tsx
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import OHLCChartPanel from "../components/OHLCChartPanel";
-import { getDataAnalysisMulti } from "../api/dataAnalysis";
-import type { DataAnalysisMultiResponse } from "../api/dataAnalysis";
+import LineChartPanel from "../components/LineDotChartPanel";
+import { getDataAnalysisMulti } from "../api/dataAnalysis_weekly_multi";
+import type { DataAnalysisMultiResponse } from "../api/dataAnalysis_weekly_multi";
 
-function DataAnalysisMultiPage() {
+type Row = Record<string, string | number | null>;
+
+function DataAnalysisWeeklyMultiPage() {
     const [searchParams] = useSearchParams();
     const tickers = searchParams.getAll("tickers");
     const category = searchParams.get("category");
 
-    const [ohlc, setOhlc] = useState<DataAnalysisMultiResponse["ohlc"]>({});
-    const [ema, setEma] = useState<DataAnalysisMultiResponse["ema"]>({});
+    const [close, setClose] = useState<DataAnalysisMultiResponse["close"]>({});
+    const [mc, setMc] = useState<DataAnalysisMultiResponse["monte_carlo"]>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -28,8 +29,8 @@ function DataAnalysisMultiPage() {
             try {
                 const result = await getDataAnalysisMulti(tickers);
                 if (cancelled) return;
-                setOhlc(result.ohlc);
-                setEma(result.ema);
+                setClose(result.close);
+                setMc(result.monte_carlo);
             } catch (err) {
                 if (!cancelled) {
                     setError(err instanceof Error ? err.message : "Something went wrong");
@@ -53,6 +54,19 @@ function DataAnalysisMultiPage() {
         };
     }, [category]);
 
+    // join close with monte carlo by date, keep the last 241 rows (240 candles + next week)
+    const rowsFor = (ticker: string): Row[] => {
+        const m = new Map<string, Row>();
+        const put = (date: string, v: Row) => m.set(date, { ...m.get(date), date, ...v });
+
+        (close[ticker] ?? []).forEach((p) => put(p.date, { close: p.close }));
+        (mc[ticker] ?? []).forEach(({ date, mc_median }) => put(date, { mc_median }));
+
+        return [...m.values()]
+            .sort((a, b) => String(a.date).localeCompare(String(b.date)))
+            .slice(-241);
+    };
+
     if (tickers.length === 0) {
         return <p style={{ color: "red" }}>No tickers specified.</p>;
     }
@@ -64,24 +78,16 @@ function DataAnalysisMultiPage() {
             {loading && <p>Loading...</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}
 
-            {Object.keys(ohlc).map((ticker) => (
+            {Object.keys(close).map((ticker) => (
                 <div key={ticker}>
                     <h3>{ticker}</h3>
 
-                    <OHLCChartPanel
-                        title="Price"
-                        data={ohlc[ticker] ?? []}
-                        ema={[
-                            {
-                                name: "EMA 7",
-                                color: "#2196f3",
-                                values: (ema[ticker] ?? []).map((p) => p.ema_7),
-                            },
-                            {
-                                name: "EMA 21",
-                                color: "#e91e63",
-                                values: (ema[ticker] ?? []).map((p) => p.ema_21),
-                            },
+                    <LineChartPanel
+                        title="Close + Monte Carlo"
+                        data={rowsFor(ticker)}
+                        series={[
+                            { key: "close", name: "Close", color: "#38bdf8", dots: true },
+                            { key: "mc_median", name: "MC median", color: "#f472b6", dots: true },
                         ]}
                     />
                 </div>
@@ -90,4 +96,4 @@ function DataAnalysisMultiPage() {
     );
 }
 
-export default DataAnalysisMultiPage;
+export default DataAnalysisWeeklyMultiPage;

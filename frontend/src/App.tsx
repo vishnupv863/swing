@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Stocks from "./pages/Stocks";
 import DataAnalysis from "./pages/DataAnalysis";
 import DataAnalysisMultiPage from "./pages/DataAnalysisMultiPage";
+import MonteCarloWeeklyPage from "./pages/MonteCarloWeeklyPage";
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/stocks" element={<Stocks />} />
         <Route path="/data-analysis/multi" element={<DataAnalysisMultiPage />} />
         <Route path="/data-analysis/:ticker" element={<DataAnalysis />} />
+        <Route path="/monte-carlo-weekly/:ticker" element={<MonteCarloWeeklyPage />} />
       </Routes>
     </BrowserRouter>
   );

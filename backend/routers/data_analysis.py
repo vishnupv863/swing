@@ -75,3 +75,11 @@ def data_analysis_multi(tickers: list[str] = Query(...)):
         "ohlc": ohlc_result,
         "ema": ema_result,
     }
+
+
+from services.monte_carlo_weekly import calculate_weekly_monte_carlo
+
+
+@router.get("/monte-carlo-weekly")
+def monte_carlo_weekly(ticker: str):
+    return {"data": calculate_weekly_monte_carlo(ticker)}

@@ -24,6 +24,23 @@ export interface DataAnalysisMultiResponse {
     ema: Record<string, EmaPoint[]>;
 }
 
+export interface MonteCarloWeeklyPoint {
+    date: string;
+    close: number | null;
+    mc_median: number | null;
+    mc_5th: number | null;
+    mc_95th: number | null;
+}
+
+export interface MonteCarloWeeklyResponse {
+    data: MonteCarloWeeklyPoint[];
+}
+
+export function getMonteCarloWeekly(ticker: string) {
+    const params = new URLSearchParams({ ticker });
+    return api.get<MonteCarloWeeklyResponse>(`/data-analysis/monte-carlo-weekly?${params.toString()}`);
+}
+
 export function getDataAnalysis(ticker: string) {
     const params = new URLSearchParams({ ticker });
     return api.get<DataAnalysisResponse>(`/data-analysis?${params.toString()}`);
